@@ -1,4 +1,4 @@
-package com.storageserver.core.security;
+package com.storageserver.security;
 
 
 import org.springframework.beans.factory.annotation.Value;
