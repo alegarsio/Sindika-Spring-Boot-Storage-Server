@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Penggunaan per Pengguna</title>
+    <link rel="stylesheet" href="user-monitoring.css">
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.usage-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.usage-table th, .usage-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.usage-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.usage-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.loading-text, .empty-text, .error-text {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+}
+.error-text { color: #e74c3c; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>All User Storages </h1>
+        </header>
+        <main>
+            <div class="card">
+                <table class="usage-table">
+                    <thead>
+                        <tr>
+                            <th>ID Pengguna</th>
+                            <th>Nama Pengguna</th>
+                            <th>Jumlah File</th>
+                            <th>Total Penggunaan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-usage-body">
+                        <tr>
+                            <td colspan="4" class="loading-text">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script >
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const API_URL = 'http://localhost:8080/api/monitoring/usage-by-user';
+    const tableBody = document.getElementById('user-usage-body');
+
+   
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    async function fetchUserUsageData() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`Gagal mengambil data: ${response.statusText}`);
+            }
+            const data = await response.json();
+
+            // Kosongkan isi tabel sebelum diisi data baru
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="empty-text">Belum ada data penggunaan.</td></tr>`;
+                return;
+            }
+
+            // Isi tabel dengan data dari API
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.userId}</td>
+                    <td>${user.userName}</td>
+                    <td>${user.fileCount}</td>
+                    <td>${formatBytes(user.totalSize)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+            tableBody.innerHTML = `<tr><td colspan="4" class="error-text">Gagal memuat data. Periksa koneksi ke server.</td></tr>`;
+        }
+    }
+
+   
+    fetchUserUsageData();
+});
+    </script>
+</body>
+</html>

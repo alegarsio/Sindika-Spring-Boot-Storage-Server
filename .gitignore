@@ -38,3 +38,10 @@ build/
 # Ignore user-uploaded files
 /storage/uploads/
 # ================================================================= #
+
+
+# Jangan abaikan file konfigurasi utama
+!Dockerfile
+!docker-compose.yaml
+!docker-compose.yml
+

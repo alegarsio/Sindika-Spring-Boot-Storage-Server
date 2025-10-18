@@ -9,12 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.storageserver.service.FileStorageService;
 
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * FileController 
+ * filecontroller is a afile that contains the basic oepration to the cloud file storage
+ * entry point -> /api
+ * upload point -> /api/upload
+ * get file point -> /api/files/ { filename }
+ */
 
 @RestController
 @RequestMapping("/api")
@@ -22,10 +28,18 @@ public class FileController {
 
     private final FileStorageService fileStorageService;
 
+    /**
+     * @param fileStorageService
+     */
+
     public FileController(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
     }
 
+    /**
+     * @param file
+     * @return
+     */
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file_upload") MultipartFile file) {
@@ -40,6 +54,12 @@ public class FileController {
     }
 
 
+    /**
+     * 
+     * @param fileName
+     * @param request
+     * @return
+     */
 
     @GetMapping("/files/{fileName:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String fileName, HttpServletRequest request) {
@@ -59,6 +79,12 @@ public class FileController {
                 .body(resource);
     }
 
+
+    /**
+     * 
+     * @param fileName
+     * @return
+     */
 
     @DeleteMapping("/files/{fileName:.+}")
     public ResponseEntity<Map<String, String>> deleteFile(@PathVariable String fileName) {
