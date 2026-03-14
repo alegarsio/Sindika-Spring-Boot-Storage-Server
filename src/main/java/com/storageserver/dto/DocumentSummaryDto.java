@@ -5,7 +5,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 
+ * Documant Summart Data Transfer Object
+ * is representing document summary details
  */
 @Data
 public class DocumentSummaryDto {

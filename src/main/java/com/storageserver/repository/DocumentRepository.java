@@ -20,5 +20,7 @@ public interface DocumentRepository extends JpaRepository<Document, Integer>{
    @Query("SELECT new com.storageserver.dto.UserUsageDto(d.uploadedBy.id, d.uploadedBy.nama, COUNT(d), COALESCE(SUM(d.fileSize), 0)) " +
            "FROM Document d GROUP BY d.uploadedBy.id, d.uploadedBy.nama ORDER BY SUM(d.fileSize) DESC")
     List<UserUsageDto> getStorageUsageByUser();
+
+    List<Document> findByUploadedBy_Id(Integer userId);
     
 }

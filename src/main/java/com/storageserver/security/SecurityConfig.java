@@ -9,7 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * This Security config not allowed for production use
  * This is only for testing purpose
@@ -33,19 +34,27 @@ public class SecurityConfig {
      * Disables CSRF protection, sets the session management policy to stateless, adds a custom API key authentication filter, and permits all requests without authentication.
      */
 
-   @Bean
+     @Bean
+     public PasswordEncoder passwordEncoder() {
+         return new BCryptPasswordEncoder();
+     }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-   
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable()) 
             
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Konfigurasi lama Anda
             
-           
             .addFilterBefore(new ApiKeyAuthFilter(apiKeyHeaderName, apiKeyValue), UsernamePasswordAuthenticationFilter.class)
             
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() 
+             
+                .requestMatchers("/api/auth/login").permitAll() 
+                
+                .requestMatchers("/api/**").authenticated() 
+                
+                .anyRequest().permitAll()
             );
             
         return http.build();

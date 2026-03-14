@@ -1,7 +1,6 @@
 package com.storageserver.model;
 
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -51,7 +50,23 @@ public class Document {
 
     @Lob
     private String processingError;
-
+    
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DocumentVersion> versions;    
+
+    /**
+     * GetFileType() -> return
+     * @return
+     */
+    public String getFileType(){
+        return this.fileType;
+    }
+    /**
+     * setFIleType() -> set type
+     * @param type 
+     */
+    public void setFileType(String type)
+    {
+        this.fileType = type; 
+    }
 }
